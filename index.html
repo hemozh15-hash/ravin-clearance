@@ -51,21 +51,26 @@
   
   .brand-logo-container {
     background: #000;
-    border: 1.5px solid rgba(232,130,30,0.5);
+    border: 2px solid rgba(232,130,30,0.7);
     border-radius: 12px;
-    padding: 8px 16px;
+    padding: 10px 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.7);
+    box-shadow: 0 5px 25px rgba(232,130,30,0.25);
     order: 1;
     min-width: 140px;
   }
-  .brand-logo-container img {
-    height: 52px;
-    width: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 2px 8px rgba(232,130,30,0.4));
+  .brand-logo-container .ravin-logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 5px;
+    text-shadow: 0 0 15px rgba(232, 130, 30, 0.7);
+  }
+  .brand-logo-container .ravin-logo-text span {
+    color: var(--orange);
   }
 
   .title-side { display: flex; flex-direction: column; align-items: center; order: 2; flex: 1; text-align: center; }
@@ -146,7 +151,9 @@
     position: relative; padding: 25px 40px; border-bottom: 4px solid var(--orange);
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
   }
-  .rep-logo-box img { height: 38px; width: auto; object-fit: contain; }
+  .rep-logo-box .ravin-logo-text { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 3px; }
+  .rep-logo-box .ravin-logo-text span { color: var(--orange); }
+  
   .rep-title { text-align: center; color: #fff; position: relative; z-index: 1; flex: 1;}
   .rep-title h1 { margin: 0; font-size: 24px; font-weight: 900; font-family: 'Poppins', sans-serif; letter-spacing: 2px; }
   .rep-title p { margin: 4px 0 0; font-size: 13px; font-weight: 700; color: var(--orange-bright); }
@@ -287,7 +294,7 @@
     <div class="hero-content">
       
       <div class="brand-logo-container">
-        <img src="https://i.ibb.co/6P05xW1/ravin-logo-real.png" alt="Ravin Trading Logo" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150'">
+        <div class="ravin-logo-text">RAV<span>IN</span></div>
       </div>
       
       <div class="title-side">
@@ -420,7 +427,7 @@
 <div id="reportSection" hidden>
   <div class="rep-header">
     <div class="rep-logo-box">
-      <img src="https://i.ibb.co/6P05xW1/ravin-logo-real.png" alt="Ravin Logo Print">
+      <div class="ravin-logo-text">RAV<span>IN</span></div>
     </div>
     <div class="rep-title">
       <h1>EMPLOYEE CLEARANCE</h1>
@@ -502,7 +509,8 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKT_uHzjgwuwMXH3Xc2g2zwEt1EpJ_8p0wi_a9EeuESH5kJZZqf11F7IPOii7iF3h1ng/exec";
+  // رابط الويب أب الجديد المربوط بالشيت وقائمة EMAIL
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6Rv-KPFVhYcECXWsVy17UWhgkET6Vv6tf1--3FaUlY7Gd5_clCwgW2wiDq0fvxX-ojQ/exec";
 
   const employeeIdInput = document.getElementById('employeeIdInput');
   const fullNameInput = document.getElementById('fullNameInput');
@@ -519,7 +527,8 @@
     fetch(SCRIPT_URL)
       .then(function(r){ return r.json(); })
       .then(function(data){
-        if(data && data.error) {
+        // التحقق لو السكريبت رجع خطأ أو فرع غير مصرح له
+        if(data && data.unauthorized) {
           document.getElementById('accessDeniedModal').style.display = 'flex';
           return;
         }
@@ -529,6 +538,7 @@
         }
       })
       .catch(function(err){
+        // في حال فشل الاتصال أو الحظر الأمني
         document.getElementById('accessDeniedModal').style.display = 'flex';
       });
   }
