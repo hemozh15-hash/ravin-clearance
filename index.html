@@ -249,13 +249,45 @@
 </head>
 <body>
 
+<!-- شاشة حظر الأمان الفخمة -->
+<div id="accessDeniedModal" style="display:none; position:fixed; inset:0; background:rgba(7,7,8,0.97); z-index:99999; justify-content:center; align-items:center; padding:20px; font-family:'Cairo',sans-serif; backdrop-filter:blur(8px);">
+  <div style="background:linear-gradient(145deg, #141314, #0d0c0d); border:2px solid rgba(232,130,30,0.5); border-radius:24px; padding:45px 35px; max-width:480px; width:100%; text-align:center; box-shadow:0 25px 70px rgba(0,0,0,0.9), 0 0 40px rgba(232,130,30,0.2);">
+    
+    <div style="width:85px; height:85px; background:rgba(232,130,30,0.12); border:2px solid #e8821e; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:38px; box-shadow:0 0 25px rgba(232,130,30,0.35);">
+      🛡️
+    </div>
+
+    <h2 style="color:#ffab52; font-size:24px; font-weight:900; margin-bottom:6px; letter-spacing:1px; font-family:'Poppins',sans-serif;">ACCESS RESTRICTED</h2>
+    <div style="color:#e8821e; font-size:12.5px; font-weight:700; font-family:'Poppins',sans-serif; letter-spacing:3px; margin-bottom:20px;">SECURITY GATEWAY — RAVIN TRADING</div>
+    
+    <p style="color:#d5cfae; font-size:14px; font-weight:600; line-height:1.7; margin-bottom:25px;">
+      عذراً، هذا البريد الإلكتروني غير مسجل في نطاق الصلاحيات الأمنية لاعتماد نظام إخلاء الطرف.
+    </p>
+
+    <div style="background:rgba(0,0,0,0.6); border:1.5px solid rgba(232,130,30,0.35); border-radius:14px; padding:22px; margin-bottom:25px; text-align:center; box-shadow:inset 0 0 15px rgba(232,130,30,0.05);">
+      <div style="font-size:11px; color:#9a9488; font-family:'Poppins',sans-serif; margin-bottom:6px; text-transform:uppercase; letter-spacing:2px;">System Administrator & Management</div>
+      <div style="color:#ffab52; font-weight:900; font-size:21px; font-family:'Poppins',sans-serif; letter-spacing:0.5px; margin-bottom:4px; text-shadow:0 2px 10px rgba(232,130,30,0.3);">Ibrahim Hassan Mohamed</div>
+      <div style="color:#ffffff; font-size:13.5px; font-weight:800; font-family:'Poppins',sans-serif; letter-spacing:1px; margin-bottom:12px;">HR Generalist</div>
+      
+      <div style="border-top:1px dashed rgba(255,255,255,0.15); padding-top:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
+        <span style="font-size:12.5px; color:#aaa;">للتواصل السريع والدعم:</span>
+        <a href="https://wa.me/201201050709" target="_blank" style="color:#4bbf82; font-weight:800; text-decoration:none; direction:ltr; font-family:'Poppins',sans-serif; font-size:13.5px; background:rgba(75,191,130,0.12); padding:5px 12px; border-radius:8px; border:1px solid rgba(75,191,130,0.3);">📱 WhatsApp</a>
+      </div>
+    </div>
+
+    <button onclick="location.reload()" style="background:linear-gradient(90deg,#e8821e,#ffab52); color:#141314; border:none; border-radius:12px; padding:15px 20px; font-family:'Cairo',sans-serif; font-weight:900; font-size:15px; cursor:pointer; width:100%; box-shadow:0 6px 20px rgba(232,130,30,0.35); transition:0.2s;">
+      🔄 إعادة التحقق بتسجيل الدخول
+    </button>
+  </div>
+</div>
+
 <div class="page" id="mainApp">
   <header class="hero hex-bg">
     <div class="ghost-r">R</div>
     <div class="hero-content">
       
       <div class="brand-logo-container">
-        <img src="40ca8571-e931-43a7-b2cb-4f7da716c6ad.png" alt="Ravin Trading Logo" onerror="this.src='https://i.ibb.co/6P05xW1/ravin-logo-real.png'">
+        <img src="https://i.ibb.co/6P05xW1/ravin-logo-real.png" alt="Ravin Trading Logo" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150'">
       </div>
       
       <div class="title-side">
@@ -388,7 +420,7 @@
 <div id="reportSection" hidden>
   <div class="rep-header">
     <div class="rep-logo-box">
-      <img src="40ca8571-e931-43a7-b2cb-4f7da716c6ad.png" alt="Ravin Logo Print">
+      <img src="https://i.ibb.co/6P05xW1/ravin-logo-real.png" alt="Ravin Logo Print">
     </div>
     <div class="rep-title">
       <h1>EMPLOYEE CLEARANCE</h1>
@@ -470,7 +502,6 @@
 </div>
 
 <script>
-  // الرابط الجديد المحدث بالكامل للـ Web App
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKT_uHzjgwuwMXH3Xc2g2zwEt1EpJ_8p0wi_a9EeuESH5kJZZqf11F7IPOii7iF3h1ng/exec";
 
   const employeeIdInput = document.getElementById('employeeIdInput');
@@ -488,12 +519,18 @@
     fetch(SCRIPT_URL)
       .then(function(r){ return r.json(); })
       .then(function(data){
+        if(data && data.error) {
+          document.getElementById('accessDeniedModal').style.display = 'flex';
+          return;
+        }
         if(Array.isArray(data)) {
           employeesData = data; 
           employeesLoaded = true;
         }
       })
-      .catch(function(err){});
+      .catch(function(err){
+        document.getElementById('accessDeniedModal').style.display = 'flex';
+      });
   }
   loadEmployees();
 
