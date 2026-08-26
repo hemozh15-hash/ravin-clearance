@@ -367,8 +367,8 @@
           </div>
         </div>
         <div class="reveal" id="uniformReveal" hidden>
-          <div class="field"><label>عدد يونيفورم صيفي</label><input type="number" id="uniformSummerQty" min="0" value="0"></div>
-          <div class="field"><label>عدد يونيفورم شتوي</label><input type="number" id="uniformWinterQty" min="0" value="0"></div>
+          <div class="field"><label>نوع اليونيفورم</label><input type="text" id="uniformType" placeholder="صيفي / شتوي"></div>
+          <div class="field"><label>قيمة العهدة</label><input type="number" id="uniformValue" min="0" value="0"></div>
         </div>
       </div>
       <div class="smart-block">
@@ -502,12 +502,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzSIayN1I_eQELkTsmSOeI_VvONTTw4Q9mdBN0nzM0Ikst-GIIv_CpZxeiqCef6fmAvaA/exec";
-
-  // لوحة تحكم الإيميلات المعتمدة
-  const ALLOWED_ADMIN_EMAILS = [
-    "hemozh15@gmail.com"
-  ];
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynLVgIga_f-ps2L2zpceEVRbXu6pGUUwYQFrybgXdLXOwLTMD-FVdJhnLLSRpL8H2WTw/exec";
 
   const employeeIdInput = document.getElementById('employeeIdInput');
   const fullNameInput = document.getElementById('fullNameInput');
@@ -690,9 +685,6 @@
     var tagIssueInput0 = document.querySelector('input[name="nameTagIssue"]:checked');
     var duesIssueInput0 = document.querySelector('input[name="duesIssue"]:checked');
 
-    const summerQty = parseInt(document.getElementById('uniformSummerQty').value) || 0;
-    const winterQty = parseInt(document.getElementById('uniformWinterQty').value) || 0;
-
     const payload = {
       employeeId: document.getElementById('employeeIdInput').value,
       fullName: document.getElementById('fullNameInput').value,
@@ -704,8 +696,8 @@
       days14: document.getElementById('days14Input').value,
       resignationFile: resignationFile,
       uniformIssue: uniIssueInput0 ? uniIssueInput0.value : '',
-      uniformSummerQty: summerQty,
-      uniformWinterQty: winterQty,
+      uniformType: document.getElementById('uniformType').value,
+      uniformValue: document.getElementById('uniformValue').value,
       nameTagIssue: tagIssueInput0 ? tagIssueInput0.value : '',
       nameTagType: document.getElementById('nameTagType').value,
       nameTagValue: document.getElementById('nameTagValue').value,
@@ -757,15 +749,7 @@
 
       var uniIssueInput = document.querySelector('input[name="uniformIssue"]:checked');
       const uniIssue = uniIssueInput ? uniIssueInput.value : '';
-      
-      let uniText = 'تم التسليم ✔️';
-      if (uniIssue === 'نعم') {
-        let parts = [];
-        if (summerQty > 0) parts.push("صيفي: " + summerQty);
-        if (winterQty > 0) parts.push("شتوي: " + winterQty);
-        uniText = parts.length > 0 ? "مطلوب: " + parts.join(" | ") : "مطلوب يونيفورم";
-      }
-      document.getElementById('repUni').textContent = uniText;
+      document.getElementById('repUni').textContent = uniIssue === 'نعم' ? "مطلوب: " + document.getElementById('uniformType').value + " (قيمة: " + document.getElementById('uniformValue').value + ")" : 'تم التسليم ✔️';
       
       var tagIssueInput = document.querySelector('input[name="nameTagIssue"]:checked');
       const tagIssue = tagIssueInput ? tagIssueInput.value : '';
@@ -789,52 +773,34 @@
       let reasons = []; 
       let totalDeduction = 0;
 
-      if (resStatus === 'انقطاع عن العمل') {
+      if (resStatus === 'انقطاع عن العمل' || days14 === 'لا') {
         hasIssues = true;
-        reasons.push({ label: 'خصم انقطاع عن العمل', amount: 650 });
-        totalDeduction += 650;
-      } else if (days14 === 'لا') {
-        hasIssues = true;
-        reasons.push({ label: 'عدم استكمال 14 يوم استقالة', amount: 650 });
+        reasons.push({ label: 'خصم قانوني (انقطاع أو عدم استكمال 14 يوم)', amount: 650 });
         totalDeduction += 650;
       }
-
       if (isHold === 'نعم') {
         hasIssues = true;
         reasons.push({ label: 'حجز لحين جرد الفرع', amount: 1300 });
         totalDeduction += 1300;
       }
-      
       if (uniIssue === 'نعم') {
-        if (summerQty > 0 || winterQty > 0) {
-          hasIssues = true;
-          if (summerQty > 0) {
-            let dSum = summerQty * 100;
-            reasons.push({ label: "خصم يونيفورم صيفي (عدد: " + summerQty + ")", amount: dSum });
-            totalDeduction += dSum;
-          }
-          if (winterQty > 0) {
-            let dWin = winterQty * 200;
-            reasons.push({ label: "خصم يونيفورم شتوي (عدد: " + winterQty + ")", amount: dWin });
-            totalDeduction += dWin;
-          }
-        }
-      }
-      
-      if (duesIssue === 'نعم' && dVal) {
         hasIssues = true;
-        let pVal = parseFloat(dVal) || 0;
-        let dType = document.getElementById('duesType').value || 'مستحقات مالية أخرى';
-        reasons.push({ label: dType, amount: pVal });
-        totalDeduction += pVal;
+        let uVal = parseFloat(document.getElementById('uniformValue').value) || 0;
+        reasons.push({ label: "عهد يونيفورم: " + document.getElementById('uniformType').value, amount: uVal });
+        totalDeduction += uVal;
       }
-
       if (tagIssue === 'نعم') {
         hasIssues = true;
         const tagQty = parseInt(document.getElementById('nameTagValue').value) || 1;
         const tagDeduction = tagQty * 50;
         reasons.push({ label: "خصم Name Tag (العدد: " + tagQty + ")", amount: tagDeduction });
-        totalDunnction += tagDeduction;
+        totalDeduction += tagDeduction;
+      }
+      if (duesIssue === 'نعم' && dVal) {
+        hasIssues = true;
+        let pVal = parseFloat(dVal) || 0;
+        reasons.push({ label: document.getElementById('duesType').value || 'مستحقات أخرى', amount: pVal });
+        totalDeduction += pVal;
       }
       if (otherA.trim() !== '') {
         hasIssues = true;
