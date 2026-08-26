@@ -475,7 +475,10 @@
         employeesData = data; 
         employeesLoaded = true; 
       })
-      .catch(function(){});
+      .catch(function(err){
+        // لو السيرفر رجع خطأ وصول (Unauthorized) يظهر شاشة الحظر
+        document.getElementById('accessDeniedModal').style.display = 'flex';
+      });
   }
   loadEmployees();
 
