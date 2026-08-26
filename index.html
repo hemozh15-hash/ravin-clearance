@@ -470,7 +470,8 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynLVgIga_f-ps2L2zpceEVRbXu6pGUUwYQFrybgXdLXOwLTMD-FVdJhnLLSRpL8H2WTw/exec";
+  // الرابط الجديد المحدث بالكامل للـ Web App
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKT_uHzjgwuwMXH3Xc2g2zwEt1EpJ_8p0wi_a9EeuESH5kJZZqf11F7IPOii7iF3h1ng/exec";
 
   const employeeIdInput = document.getElementById('employeeIdInput');
   const fullNameInput = document.getElementById('fullNameInput');
@@ -487,7 +488,6 @@
     fetch(SCRIPT_URL)
       .then(function(r){ return r.json(); })
       .then(function(data){
-        // تم تجاوز فحص الإيميل المعطل لضمان فتح الفورم بسلاسة تامة
         if(Array.isArray(data)) {
           employeesData = data; 
           employeesLoaded = true;
